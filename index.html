@@ -201,25 +201,32 @@
             document.getElementById("customPopup").style.display = "none";
         }
 
-        // JW Player Setup (DASH instead of HLS)
-        jwplayer("jwplayerDiv").setup({
-            file: "https://ABGQJFUAAAAAAAAMAGMNW3PEHGUEX.cf3a3b91f7a2490193568961bdbe7b6f.emt.cf.ww.aiv-cdn.net/pdx-nitro/live/clients/dash/enc/lhc1i3o89r/out/v1/cfb494be02bb42d88d9a5da4d7454280/cenc.mpd"
-                
+        fetch('https://raw.githubusercontent.com/allrounder745/Willow-Jaon/refs/heads/main/data.json')
+            .then(res => res.json())
+            .then(data => {
+                const dashUrl = data.source.url;
+                const keyInfo = data.drm.clearkey.keys[0];
 
-                ,  // Replace with your actual DASH MPD URL
-            autostart: true,
-            width: "100%",
-            height: "100%",
-            stretching: "uniform",
-            type: "dash",
-            drm: {
-                clearkey: {
-                    keyId: "bc1234c952a55a08b1a1997de4ab252c",
-                    key: "32f9d6805671929265a15f47dbae0f9b"
-                }
-            }
-        });
+                jwplayer("jwplayerDiv").setup({
+                    file: dashUrl,
+                    autostart: true,
+                    width: "100%",
+                    height: "100%",
+                    stretching: "uniform",
+                    type: "dash",
+                    drm: {
+                        clearkey: {
+                            keyId: keyInfo.keyId,
+                            key: keyInfo.key
+                        }
+                    }
+                });
+            })
+            .catch(err => {
+                console.error("Failed to load video config:", err);
+            });
     </script>
+    
 
 </body>
 </html>
